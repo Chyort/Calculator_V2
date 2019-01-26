@@ -1,0 +1,88 @@
+html {
+    box-sizing: border-box;
+}
+  
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+}
+
+header {
+    background-color: black;
+    color: blue;
+    text-align: center;
+    font-size: xx-large;
+}
+
+.calculator {
+    padding: 1%;
+    border: 1px solid;
+    border-radius: 5px;
+    background-color: lightslategray;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 275px;
+    max-width: 402px;
+}
+
+.calculatorScreen {
+    width: 100%;
+    font-size: 4rem;
+    height: 80px;
+    background-color: #4cbef2;
+    color: black;
+    text-align: right;
+    padding-right: 20px;
+    padding-left: 10px;
+}
+
+button {
+    height: 60px;
+    background-color: #fff;
+    border-radius: 3px;
+    background-color: grey;
+    font-size: 1.5rem;
+    color: #333;
+    background-image: linear-gradient(to bottom,transparent,transparent 50%,rgba(0,0,0,.04));
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.05), inset 0 1px 0 0 rgba(255,255,255,.45), inset 0 -1px 0 0 rgba(255,255,255,.15), 0 1px 0 0 rgba(255,255,255,.15);
+    text-shadow: 0 1px rgba(255,255,255,.4);
+}
+  
+button:hover {
+    background-color: #eaeaea;
+}
+
+.clear, .clearEntry {
+    background-color: #2196f3;
+}
+
+.clear:hover, .clearEntry:hover {
+    background-color: #03a9f4;
+}
+  
+.operator {
+    background-color: #ff0000;
+}
+
+.operator:hover {
+    background-color: #ff0000a1;
+}
+  
+.calculatorKeys > div {
+    display: grid
+}
+
+.row1 {
+    grid-template-columns: 4fr 4fr 2.7fr;
+}
+
+.row2, .row3, .row4, .row5 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.row4 .operator {
+    height: 200%;
+}
