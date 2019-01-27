@@ -1,8 +1,9 @@
 class Calculator {
     constructor(inputArray, value){
-        
         this.inputArray = inputArray;
         this.value = value;
+        this.inputArray = [];
+        this.value = 0;
 
         this.initialize = this.initialize.bind(this);
     }
@@ -20,6 +21,10 @@ class Calculator {
     }
 
     clearAll(e){
+        calc.inputArray = [];
+        calc.value = 0;
+        $('.calculatorScreen').val(0);
+
         console.log('ClearAll was clicked');
     }
 
@@ -33,9 +38,8 @@ class Calculator {
         this.num2 = num2;
         this.operator = operator;
 
-        if(calc.inputArray === undefined){
+        if(calc.inputArray.length === 0){
             num1 = this.value;
-            calc.inputArray = [];
             calc.inputArray.push(num1);
         } else if (calc.inputArray.length === 1){
             operator = this.value;
@@ -71,7 +75,7 @@ class Calculator {
                 calc.value = num1 / num2;
         }
 
-        $('.calculatorScreen').val(calc.value);
+        $('.calculatorScreen').val(calc.inputArray.join("") + " = " + calc.value);
 
         console.log('evaluate was called');
     }
