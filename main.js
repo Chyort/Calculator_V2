@@ -10,8 +10,8 @@ class Calculator {
     initialize(){
         console.log('Initialize called');
 
-        $('.clear').click(this.clearClick);
-        $('.clearEntry').click(this.clearEntryClick);
+        $('.clear').click(this.clearAll);
+        $('.clearEntry').click(this.clearEntry);
         $('.operator').click(this.doMath);
         $('.number').click(this.doMath);
         $('.decimal').click(this.doMath);
@@ -19,11 +19,11 @@ class Calculator {
         
     }
 
-    clearClick(e){
-        console.log('Clear was clicked');
+    clearAll(e){
+        console.log('ClearAll was clicked');
     }
 
-    clearEntryClick(e){
+    clearEntry(e){
         console.log('Clear Entry clicked');
     }
 
