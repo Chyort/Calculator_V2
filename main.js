@@ -4,6 +4,7 @@ class Calculator {
         this.value = value;
         this.inputArray = [];
         this.value = 0;
+        this.prevArray = null;
 
         this.initialize = this.initialize.bind(this);
     }
@@ -23,12 +24,34 @@ class Calculator {
     clearAll(e){
         calc.inputArray = [];
         calc.value = 0;
+        calc.prevArray = null;
         $('.calculatorScreen').val(0);
 
         console.log('ClearAll was clicked');
     }
 
     clearEntry(e){
+        if(calc.inputArray.length - 1 > 0) {
+            let checkType = typeof calc.inputArray[calc.inputArray.length - 1];
+
+            for(let i = calc.inputArray.length - 1; i >= 0; i--){
+                if(typeof calc.inputArray[i] === checkType){
+                    calc.inputArray.pop();
+                } else if (typeof calc.inputArray[i] !== checkType){ //make empty calc.inputArray = [0] and calc.value = 0;
+                    i = 0;
+                    console.log("Clear entry complete");
+                }
+            }
+
+            $('.calculatorScreen').val(calc.inputArray.join(""));
+
+        } else if (calc.inputArray.length - 1 === 0){
+            calc.inputArray = [];
+            calc.value = 0;
+            
+            $('.calculatorScreen').val(calc.value);
+        }
+
         console.log('Clear Entry clicked');
     }
 
@@ -39,13 +62,13 @@ class Calculator {
         this.operator = operator;
 
         if(calc.inputArray.length === 0){
-            num1 = this.value;
+            num1 = parseFloat(this.value);
             calc.inputArray.push(num1);
         } else if (calc.inputArray.length === 1){
             operator = this.value;
             calc.inputArray.push(operator);
         } else if (calc.inputArray.length === 2){
-            num2 = this.value;
+            num2 = parseFloat(this.value);
             calc.inputArray.push(num2);
         }
 
@@ -75,6 +98,7 @@ class Calculator {
                 calc.value = num1 / num2;
         }
 
+        calc.prevArray = calc.inputArray;
         $('.calculatorScreen').val(calc.inputArray.join("") + " = " + calc.value);
 
         console.log('evaluate was called');
