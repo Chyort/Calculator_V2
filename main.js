@@ -31,14 +31,16 @@ class Calculator {
     }
 
     clearEntry(e){
-        if(calc.inputArray.length - 1 > 0) {
-            let checkType = typeof calc.inputArray[calc.inputArray.length - 1];
+        let checkType = typeof calc.inputArray[calc.inputArray.length - 1];
+        if(calc.inputArray.length - 1 > 0 && checkType === "number" && calc.inputArray[calc.inputArray.length - 1] !== 0) {
 
             for(let i = calc.inputArray.length - 1; i >= 0; i--){
                 if(typeof calc.inputArray[i] === checkType){
                     calc.inputArray.pop();
-                } else if (typeof calc.inputArray[i] !== checkType){ //make empty calc.inputArray = [0] and calc.value = 0;
+                } else if (typeof calc.inputArray[i] !== checkType){
                     i = 0;
+                    calc.inputArray.push(0);
+                    calc.value = 0;
                     console.log("Clear entry complete");
                 }
             }
