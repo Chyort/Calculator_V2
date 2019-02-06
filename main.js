@@ -80,6 +80,10 @@ class Calculator {
     }
 
     evaluate(e){
+
+        if(calc.prevArray === calc.inputArray){ //operation repeat
+            calc.inputArray[0] = calc.value;
+        }
         let operator = calc.inputArray[1];
         let num1 = parseInt(calc.inputArray[0]);
         let num2 = parseInt(calc.inputArray[2]);
