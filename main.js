@@ -5,6 +5,8 @@ class Calculator {
         this.inputArray = [];
         this.value = 0;
         this.prevArray = null;
+        this.validNumbers = /[0-9]/;
+        this.validOperators = /[\+\-\*\x\X\/\/]/;
 
         this.initialize = this.initialize.bind(this);
     }
@@ -25,30 +27,27 @@ class Calculator {
         calc.inputArray = [];
         calc.value = 0;
         calc.prevArray = null;
-        $('.calculatorScreen').val(0);
+        $('.calculatorInput').val("");
+        $('.calculatorValue').val(0);
 
         console.log('ClearAll was clicked');
     }
 
     clearEntry(e){
-        let checkType = typeof calc.inputArray[calc.inputArray.length - 1];
-        if(calc.inputArray.length - 1 > 0 && checkType === "number" && calc.inputArray[calc.inputArray.length - 1] !== 0) {
+        if(calc.inputArray.length - 1 > 0 && calc.inputArray[calc.inputArray.length - 1] !== 0 && calc.inputArray[0] !== calc.value && calc.prevArray === calc.inputArray) {
 
-            for(let i = calc.inputArray.length - 1; i >= 0; i--){
-                if(typeof calc.inputArray[i] === checkType){
-                    calc.inputArray.pop();
-                } else if (typeof calc.inputArray[i] !== checkType){
-                    i = 0;
-                    calc.inputArray.push(0);
-                    calc.value = 0;
-                    console.log("Clear entry complete");
-                }
-            }
+            calc.inputArray.splice(0, 1, 0);
+            calc.value = calc.inputArray[0];            
 
-            $('.calculatorScreen').val(calc.inputArray.join(""));
+            $('.calculatorInput').val(calc.inputArray.join(""));
+            $('.calculatorValue').val(calc.value);
 
+        } else if (calc.inputArray !== calc.prevArray) {
+            calc.inputArray.pop();
+            calc.value = 0;
+            $('.calculatorValue').val(calc.value);
         } else if (calc.inputArray.length - 1 === 0){
-            calc.inputArray = [];
+            calc.inputArray = [0];
             calc.value = 0;
             
             $('.calculatorScreen').val(calc.value);
@@ -63,18 +62,33 @@ class Calculator {
         this.num2 = num2;
         this.operator = operator;
 
-        if(calc.inputArray.length === 0){
+        if(calc.inputArray.length === 0 && calc.value.match(calc.validNumbers)){
             num1 = parseFloat(this.value);
+            calc.value = num1;
             calc.inputArray.push(num1);
-        } else if (calc.inputArray.length === 1){
+            $('.calculatorValue').val(num1);
+        } else if (calc.inputArray.length === 0 && calc.value.match(calc.validOperators)){
+            operator = this.value;
+            calc.inputArray = [0];
+            calc.inputArray.push(operator);
+            calc.value = 0;
+            $('.calculatorInput').val(calc.inputArray.join(""));
+        } else if (calc.inputArray.length === 1 && calc.value.match(calc.validOperators)){
             operator = this.value;
             calc.inputArray.push(operator);
-        } else if (calc.inputArray.length === 2){
+            calc.value = calc.inputArray[0];
+            $('.calculatorInput').val(calc.inputArray.join(""));
+        } else if (calc.inputArray.length === 2 && calc.value.match(calc.validNumbers)){
             num2 = parseFloat(this.value);
+            calc.value = num2;
             calc.inputArray.push(num2);
+            $('.calculatorValue').val(num2);
+        } else if (calc.inputArray.length === 3 && calc.inputArray === calc.prevArray) {
+            num1 = parseFloat(this.value);
+            calc.inputArray.splice(0, 1, num1);
+            $('.calculatorValue').val(num1);
         }
 
-        $('.calculatorScreen').val(calc.inputArray.join(""));
 
         console.log(this.value, ' was clicked');
     }
@@ -83,10 +97,12 @@ class Calculator {
 
         if(calc.prevArray === calc.inputArray){ //operation repeat
             calc.inputArray[0] = calc.value;
+        } else if (calc.inputArray.length === 2) {
+            calc.inputArray.push(calc.value);
         }
         let operator = calc.inputArray[1];
-        let num1 = parseInt(calc.inputArray[0]);
-        let num2 = parseInt(calc.inputArray[2]);
+        let num1 = parseFloat(calc.inputArray[0]);
+        let num2 = parseFloat(calc.inputArray[2]);
 
         switch(operator){
             case '+':
@@ -105,7 +121,8 @@ class Calculator {
         }
 
         calc.prevArray = calc.inputArray;
-        $('.calculatorScreen').val(calc.inputArray.join("") + " = " + calc.value);
+        $('.calculatorInput').val(calc.inputArray.join(""));
+        $('.calculatorValue').val(calc.value);
 
         console.log('evaluate was called');
     }
