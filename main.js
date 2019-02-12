@@ -5,7 +5,7 @@ class Calculator {
         this.inputArray = [];
         this.value = 0;
         this.prevArray = null;
-        this.validNumbers = /[0-9]/;
+        this.validNumbers = /[-+]?[0-9]*\.?[0-9]+/;
         this.validOperators = /[\+\-\*\x\X\/\/]/;
 
         this.initialize = this.initialize.bind(this);
@@ -61,27 +61,52 @@ class Calculator {
         this.num1 = num1;
         this.num2 = num2;
         this.operator = operator;
+        let inputArrayNumbers = calc.validNumbers.test(calc.inputArray);
+        let inputArrayOperators = calc.validOperators.test(calc.inputArray);
+        let currentNumber = calc.validNumbers.test(calc.value);  //checks for floating point numbers with regex in calc.value
+        let currentOperator = calc.validOperators.test(calc.value);
 
-        if(calc.inputArray.length === 0 && calc.value.match(calc.validNumbers)){
+        if(!inputArrayOperators && currentNumber){
             num1 = parseFloat(this.value);
-            calc.value = num1;
             calc.inputArray.push(num1);
+            calc.value = calc.inputArray.join("");
+            calc.value = parseFloat(calc.value);
+
+            if(calc.inputArray.length > 1){
+                num1 = "" + calc.inputArray[0] + calc.inputArray[1];
+                num1 = parseFloat(num1);
+                calc.inputArray.splice(0, 2, num1);
+            }
+            
             $('.calculatorValue').val(num1);
-        } else if (calc.inputArray.length === 0 && calc.value.match(calc.validOperators)){
+        } else if (calc.inputArray.length === 0 && currentOperator){
             operator = this.value;
             calc.inputArray = [0];
             calc.inputArray.push(operator);
             calc.value = 0;
             $('.calculatorInput').val(calc.inputArray.join(""));
-        } else if (calc.inputArray.length === 1 && calc.value.match(calc.validOperators)){
+        } else if (inputArrayNumbers && inputArrayOperators && currentOperator){
+            operator = this.value;
+            calc.inputArray.pop();
+            calc.inputArray.push(operator);
+            $('.calculatorInput').val(calc.inputArray.join(""));
+        } else if (inputArrayNumbers && currentOperator){
             operator = this.value;
             calc.inputArray.push(operator);
             calc.value = calc.inputArray[0];
             $('.calculatorInput').val(calc.inputArray.join(""));
-        } else if (calc.inputArray.length === 2 && calc.value.match(calc.validNumbers)){
+        } else if (inputArrayNumbers && inputArrayOperators && currentNumber){
             num2 = parseFloat(this.value);
             calc.value = num2;
             calc.inputArray.push(num2);
+
+            if(calc.inputArray.length === 4){
+                num2 = "" + calc.inputArray[2] + calc.inputArray[3];
+                num2 = parseFloat(num2);
+                calc.inputArray.splice(2, 2, num2);
+            }
+
+
             $('.calculatorValue').val(num2);
         } else if (calc.inputArray.length === 3 && calc.inputArray === calc.prevArray) {
             num1 = parseFloat(this.value);
