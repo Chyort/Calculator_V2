@@ -7,6 +7,7 @@ class Calculator {
         this.prevArray = null;
         this.validNumbers = /[-+]?[0-9]*\.?[0-9]+/;
         this.validOperators = /[\+\-\*\x\X\/\/]/;
+        this.decimal = /\./; // Regex here? for line 127
 
         this.initialize = this.initialize.bind(this);
     }
@@ -63,14 +64,37 @@ class Calculator {
         this.operator = operator;
         let inputArrayNumbers = calc.validNumbers.test(calc.inputArray);
         let inputArrayOperators = calc.validOperators.test(calc.inputArray);
-        let currentNumber = calc.validNumbers.test(calc.value);  //checks for floating point numbers with regex in calc.value
+        let currentNumber = calc.validNumbers.test(calc.value);
         let currentOperator = calc.validOperators.test(calc.value);
-
+        let lastIndexDecimal = calc.decimal.test(calc.inputArray[2]);
+        
+        if(calc.value === "." && !inputArrayOperators){
+            calc.inputArray.push(calc.value);
+            $('.calculatorValue').val(calc.inputArray.join(""));
+        } else if (calc.value === "." && inputArrayOperators){
+            calc.inputArray.push(calc.value);
+            calc.value = calc.inputArray[2] + calc.value;
+            calc.inputArray.splice(2, calc.inputArray.length, calc.value)
+            $('.calculatorValue').val(calc.value);
+        }
         if(!inputArrayOperators && currentNumber){
+            if(calc.inputArray.includes(".")){
+                calc.inputArray.push(calc.value);
+                if(calc.value === "0"){
+                    calc.inputArray.splice(0, calc.inputArray.length, calc.inputArray.join(""));
+                    $('.calculatorValue').val(calc.inputArray);
+                    return;
+                }
+                num1 = calc.inputArray.join("") * 1;
+                calc.inputArray.splice(0, 3, num1);
+                calc.value = num1;
+                $('.calculatorValue').val(calc.value);
+                return;
+            }
             num1 = parseFloat(this.value);
             calc.inputArray.push(num1);
             calc.value = calc.inputArray.join("");
-            calc.value = parseFloat(calc.value);
+            calc.value = calc.value * 1;
 
             if(calc.inputArray.length > 1){
                 num1 = "" + calc.inputArray[0] + calc.inputArray[1];
@@ -95,7 +119,20 @@ class Calculator {
             calc.inputArray.push(operator);
             calc.value = calc.inputArray[0];
             $('.calculatorInput').val(calc.inputArray.join(""));
-        } else if (inputArrayNumbers && inputArrayOperators && currentNumber){
+        } else if (inputArrayNumbers && inputArrayOperators && currentNumber && !isNaN(calc.value)){
+
+            if(calc.inputArray.length === 3 && typeof calc.inputArray[2] === "string"){
+                if(lastIndexDecimal){
+                    calc.value = calc.inputArray[2] + calc.value;
+                    calc.inputArray.splice(2, 2, calc.value);
+                    $('.calculatorValue').val(calc.value);
+                }
+            }
+
+            if(calc.value.includes(".")){
+                return;
+            }
+
             num2 = parseFloat(this.value);
             calc.value = num2;
             calc.inputArray.push(num2);
@@ -131,24 +168,24 @@ class Calculator {
 
         switch(operator){
             case '+':
-                calc.value = num1 + num2;
+                calc.value = (num1 * 10 + num2 * 10) / 10;
                 break;
             case '-':
-                calc.value = num1 - num2;
+                calc.value =  (num1 * 10 - num2 * 10) / 10;
                 break;
             case '*':
             case 'x':
             case 'X':
-                calc.value = num1 * num2;
+                calc.value =  ((num1 * 10) * (num2 * 10)) / 100;
                 break;
             case '/':
-                calc.value = num1 / num2;
+                calc.value =  (num1 / num2 * 10) / 10;
         }
 
         calc.prevArray = calc.inputArray;
         $('.calculatorInput').val(calc.inputArray.join(""));
         $('.calculatorValue').val(calc.value);
-
+        console.log("value: ", calc.value);
         console.log('evaluate was called');
     }
 }
