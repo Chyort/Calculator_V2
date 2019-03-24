@@ -28,23 +28,11 @@ header {
     max-width: 402px;
 }
 
-.calculatorInput {
-    width: 100%;
-    font-size: 1.5rem;
-    background-color: #4cbef2;
-    border-bottom: #4cbef2;
-    color: black;
-    text-align: right;
-    padding-right: 10px;
-    padding-left: 10px;
-}
-
-.calculatorValue {
+.calculatorScreen {
     width: 100%;
     font-size: 4rem;
     height: 80px;
     background-color: #4cbef2;
-    border-top: #4cbef2;
     color: black;
     text-align: right;
     padding-right: 20px;
