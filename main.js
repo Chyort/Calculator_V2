@@ -16,6 +16,7 @@ class Calculator {
         $('.operator').click(this.handleOperator);
         $('.equalSign').click(this.handleEqual);
         $('.decimal').click(this.handleDecimal);
+        $('.clearEntry').click(this.handleClearEntry);
     }
 
     //Display inputArray on .calculatorScreen.
@@ -33,8 +34,20 @@ class Calculator {
         calc.input = undefined;
         calc.inputArray = [];
         calc.display();
+        calc.firstOperand = null;
+        calc.firstOperator = null;
 
         console.log('clearAll executed');
+    }
+
+    handleClearEntry() {
+        if (calc.inputArray.length === 1) {
+            calc.clearAll();
+        }
+        calc.inputArray.pop();
+        calc.display();
+
+        console.log('handleClearEntry executed');
     }
 
     //First input is turned into a string and pushed to inputArray,
