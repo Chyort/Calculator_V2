@@ -3,6 +3,8 @@ class Calculator {
         this.inputArray = inputArray;
         this.inputArray = [];
         this.input = input;
+        this.firstOperator = null;
+        this.firstOperand = null;
 
         this.initialize = this.initialize.bind(this);
     }
@@ -12,6 +14,7 @@ class Calculator {
         $('.number').click(this.handleNumber);
         $('.clear').click(this.clearAll);
         $('.operator').click(this.handleOperator);
+        $('.equalSign').click(this.handleEqual);
     }
 
     //Display inputArray on .calculatorScreen.
@@ -90,6 +93,57 @@ class Calculator {
         inputArray[inputArray.length - 1] = value;
 
         console.log('replaceLastInput executed');
+    }
+
+    handleEqual() {
+        var operatorIndex = 1;
+        if(calc.inputArray.length === 1 && calc.firstOperand && calc.firstOperator) {
+            calc.inputArray[0] = calc.doMath(calc.inputArray[0], calc.firstOperand, calc.firstOperator);
+        }
+        
+        while (calc.inputArray.length > 2) {
+            var input = calc.inputArray[operatorIndex];
+            var input2 = calc.inputArray[operatorIndex + 1];
+            
+            if(isNaN(input) && input2) {
+                var operand1 = Number(calc.inputArray[operatorIndex - 1]);
+                var operand2 = Number(calc.inputArray[operatorIndex + 1]);
+                calc.firstOperator = input;
+                calc.firstOperand = operand2;
+                calc.inputArray.splice(0, operatorIndex + 2, calc.doMath(operand1, operand2, input));
+            }
+        }
+
+        if (calc.inputArray.length === 2) {
+            calc.firstOperator = calc.firstOperator ? calc.firstOperator : calc.inputArray[operatorIndex];
+            var operand1 = Number(calc.inputArray[0]);
+            var operand2 = Number(calc.inputArray[0]);
+            calc.inputArray.splice(0, operatorIndex +1, calc.doMath(operand1, operand2, calc.firstOperator));
+        }
+
+        calc.display();
+
+        console.log('handleEqual executed');
+    }
+
+    doMath(x, y, operator) {
+        console.log('doMath executed');
+
+
+        switch (operator) {
+            case "+":
+                return x + y;
+            case "-":
+                return x - y;
+            case "÷":
+            case "/":
+                return x / y;
+            case "×":
+            case "*":
+                return x * y;
+            default:
+                return "invalid operator";
+        }
     }
 
 }
