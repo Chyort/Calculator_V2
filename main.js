@@ -10,6 +10,7 @@ class Calculator {
     //jQuery selectors on event will call method
     initialize(){
         $('.number').click(this.handleNumber);
+        $('.clear').click(this.clearAll);
         
     }
 
@@ -22,6 +23,14 @@ class Calculator {
         $(".calculatorScreen").val(result);
 
         console.log('display executed');
+    }
+
+    clearAll() {
+        calc.input = undefined;
+        calc.inputArray = [];
+        calc.display();
+
+        console.log('clearAll executed');
     }
 
     //First input is turned into a string and pushed to inputArray, successive inputs are parameters for concatLastInput
