@@ -17,6 +17,38 @@ class Calculator {
         $('.equalSign').click(this.handleEqual);
         $('.decimal').click(this.handleDecimal);
         $('.clearEntry').click(this.handleClearEntry);
+
+        //numpad keys
+        $(document).on("keydown", function(e) {
+            var key = e.key;
+            if (!isNaN(key)) {
+                calc.handleNumber(key);
+                calc.userInput += key;
+            } else if (key == "+" || key == "-" || key == "/" || key == "*") {
+                calc.userInput += key;
+                if (key == "/") {
+                    key = "÷";
+                }
+                if (key == "*") {
+                    key = "×";
+                }
+            calc.handleOperator(key);
+            } else if (key == ".") {
+                calc.handleDecimal(key);
+            } else if (key == "=" || key == "Enter") {
+                calc.handleEqual();
+            } else if (key == "Backspace") {
+                calc.clearAll();
+            } else if (key == "ArrowLeft") {
+                calc.handleClearEntry();
+            } else {
+                //  Ignore all other keydown events
+                return;
+            }
+
+            console.log(e.key, 'key pressed');
+        });
+
     }
 
     //Display inputArray on .calculatorScreen.
