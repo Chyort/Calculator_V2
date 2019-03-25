@@ -1,80 +1,222 @@
 class Calculator {
-    constructor(inputArray, value){
-        
+    constructor(inputArray, input){
         this.inputArray = inputArray;
-        this.value = value;
+        this.inputArray = [];
+        this.input = input;
+        this.firstOperator = null;
+        this.firstOperand = null;
 
         this.initialize = this.initialize.bind(this);
     }
 
+    //jQuery selectors on event will call method.
     initialize(){
-        console.log('Initialize called');
-
+        $('.number').click(this.handleNumber);
         $('.clear').click(this.clearAll);
-        $('.clearEntry').click(this.clearEntry);
-        $('.operator').click(this.doMath);
-        $('.number').click(this.doMath);
-        $('.decimal').click(this.doMath);
-        $('.equalSign').click(this.evaluate);
+        $('.operator').click(this.handleOperator);
+        $('.equalSign').click(this.handleEqual);
+        $('.decimal').click(this.handleDecimal);
+        $('.clearEntry').click(this.handleClearEntry);
+
+        //numpad keys
+        $(document).on("keydown", function(e) {
+            var key = e.key;
+            if (!isNaN(key)) {
+                calc.handleNumber(key);
+                calc.userInput += key;
+            } else if (key == "+" || key == "-" || key == "/" || key == "*") {
+                calc.userInput += key;
+                if (key == "/") {
+                    key = "÷";
+                }
+                if (key == "*") {
+                    key = "×";
+                }
+            calc.handleOperator(key);
+            } else if (key == ".") {
+                calc.handleDecimal(key);
+            } else if (key == "=" || key == "Enter") {
+                calc.handleEqual();
+            } else if (key == "Backspace") {
+                calc.clearAll();
+            } else if (key == "ArrowLeft") {
+                calc.handleClearEntry();
+            } else {
+                //  Ignore all other keydown events
+                return;
+            }
+
+            console.log(e.key, 'key pressed');
+        });
+
+    }
+
+    //Display inputArray on .calculatorScreen.
+    display() {
+        var result = calc.inputArray.join(" ");
+        if (calc.inputArray.length === 0) {
+          result = "0";
+        }
+        $(".calculatorScreen").val(result);
+
+        console.log('display executed');
+    }
+
+    clearAll() {
+        calc.input = undefined;
+        calc.inputArray = [];
+        calc.display();
+        calc.firstOperand = null;
+        calc.firstOperator = null;
+
+        console.log('clearAll executed');
+    }
+
+    handleClearEntry() {
+        if (calc.inputArray.length === 1) {
+            calc.clearAll();
+        }
+        calc.inputArray.pop();
+        calc.display();
+
+        console.log('handleClearEntry executed');
+    }
+
+    //First input is turned into a string and pushed to inputArray,
+    //successive inputs are parameters for concatLastInput.
+    handleNumber(input) {
+        calc.input = input;
+
+        if (typeof input !== 'string') {
+            input = $(this).text();
+            calc.input = input;
+        }
+        if (calc.isLastInputNum(calc.inputArray) || calc.inputArray[calc.inputArray.length - 1] === '.') {
+            calc.concatLastInput(calc.inputArray, calc.input);
+        } else {
+            calc.inputArray.push(calc.input);
+        }
+        calc.display();
+
+    }
+
+    handleDecimal(input) {
+        calc.input = input;
+        if (calc.hasDecimal(calc.inputArray[calc.inputArray.length - 1])) {
+            return;
+        }
+        if (typeof input !== 'string') {
+            var input = $(this).text();
+        }
+        if(calc.isLastInputNum(calc.inputArray)) {
+            calc.concatLastInput(calc.inputArray, input);
+        } else {
+            calc.inputArray.push(input);
+        }
+
+        calc.display();
+
+        console.log('handleDecimal executed');
+    }
+
+    hasDecimal(str) {
+        console.log('handleDecimal executed');
+
+        return str && str.toString().indexOf('.') > -1;
+    }
+
+    //Returns the inputArray and checks if last index in inputArray is a number.
+    isLastInputNum(inputArray) {
+        console.log('isLastInputNum executed');
+
+        return inputArray && !isNaN(inputArray[inputArray.length - 1]);
+    }
+
+    //Takes the inputArray that has at least one number and concatenates value(input).
+    concatLastInput(inputArray, value) {
+        inputArray[inputArray.length - 1] += value;
+
+        console.log('concatLastInput executed');
+    }
+
+    // Takes the input and pushes it to inputArray if there is a previous
+    // input that is a number in inputArray, replaces the last inputArray input if it is a number.
+    handleOperator(input) {
+        if (calc.inputArray.length < 1) {
+            return;
+        }
+        if (typeof input != 'string') {
+            input = $(this).text();
+            calc.input = input;
+        }
+        if (calc.isLastInputNum(calc.inputArray)) {
+            calc.inputArray.push(input);
+        } else {
+            calc.replaceLastInput(calc.inputArray, calc.input);
+        }
+        calc.display();
+
+        console.log('handleOperator executed');
+    }
+
+    //Replaces last index in inputArray with new value.
+    replaceLastInput(inputArray, value) {
+        inputArray[inputArray.length - 1] = value;
+
+        console.log('replaceLastInput executed');
+    }
+
+    handleEqual() {
+        var operatorIndex = 1;
+        if(calc.inputArray.length === 1 && calc.firstOperand && calc.firstOperator) {
+            calc.inputArray[0] = calc.doMath(calc.inputArray[0], calc.firstOperand, calc.firstOperator);
+        }
         
-    }
-
-    clearAll(e){
-        console.log('ClearAll was clicked');
-    }
-
-    clearEntry(e){
-        console.log('Clear Entry clicked');
-    }
-
-    doMath(num1, num2, operator){
-        calc.value = $(this).text();
-        this.num1 = num1;
-        this.num2 = num2;
-        this.operator = operator;
-
-        if(calc.inputArray === undefined){
-            num1 = this.value;
-            calc.inputArray = [];
-            calc.inputArray.push(num1);
-        } else if (calc.inputArray.length === 1){
-            operator = this.value;
-            calc.inputArray.push(operator);
-        } else if (calc.inputArray.length === 2){
-            num2 = this.value;
-            calc.inputArray.push(num2);
+        while (calc.inputArray.length > 2) {
+            var input = calc.inputArray[operatorIndex];
+            var input2 = calc.inputArray[operatorIndex + 1];
+            
+            if(isNaN(input) && input2) {
+                var operand1 = Number(calc.inputArray[operatorIndex - 1]);
+                var operand2 = Number(calc.inputArray[operatorIndex + 1]);
+                calc.firstOperator = input;
+                calc.firstOperand = operand2;
+                calc.inputArray.splice(0, operatorIndex + 2, calc.doMath(operand1, operand2, input));
+            }
         }
 
-        $('.calculatorScreen').val(calc.inputArray.join(""));
-
-        console.log(this.value, ' was clicked');
-    }
-
-    evaluate(e){
-        let operator = calc.inputArray[1];
-        let num1 = parseInt(calc.inputArray[0]);
-        let num2 = parseInt(calc.inputArray[2]);
-
-        switch(operator){
-            case '+':
-                calc.value = num1 + num2;
-                break;
-            case '-':
-                calc.value = num1 - num2;
-                break;
-            case '*':
-            case 'x':
-            case 'X':
-                calc.value = num1 * num2;
-                break;
-            case '/':
-                calc.value = num1 / num2;
+        if (calc.inputArray.length === 2) {
+            calc.firstOperator = calc.firstOperator ? calc.firstOperator : calc.inputArray[operatorIndex];
+            var operand1 = Number(calc.inputArray[0]);
+            var operand2 = Number(calc.inputArray[0]);
+            calc.inputArray.splice(0, operatorIndex +1, calc.doMath(operand1, operand2, calc.firstOperator));
         }
 
-        $('.calculatorScreen').val(calc.value);
+        calc.display();
 
-        console.log('evaluate was called');
+        console.log('handleEqual executed');
     }
+
+    doMath(x, y, operator) {
+        console.log('doMath executed');
+
+
+        switch (operator) {
+            case "+":
+                return x + y;
+            case "-":
+                return x - y;
+            case "÷":
+            case "/":
+                return x / y;
+            case "×":
+            case "*":
+                return x * y;
+            default:
+                return "invalid operator";
+        }
+    }
+
 }
 
 const calc = new Calculator();
