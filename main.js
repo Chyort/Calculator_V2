@@ -15,6 +15,7 @@ class Calculator {
         $('.clear').click(this.clearAll);
         $('.operator').click(this.handleOperator);
         $('.equalSign').click(this.handleEqual);
+        $('.decimal').click(this.handleDecimal);
     }
 
     //Display inputArray on .calculatorScreen.
@@ -52,6 +53,31 @@ class Calculator {
         }
         calc.display();
 
+    }
+
+    handleDecimal(input) {
+        calc.input = input;
+        if (calc.hasDecimal(calc.inputArray[calc.inputArray.length - 1])) {
+            return;
+        }
+        if (typeof input !== 'string') {
+            var input = $(this).text();
+        }
+        if(calc.isLastInputNum(calc.inputArray)) {
+            calc.concatLastInput(calc.inputArray, input);
+        } else {
+            calc.inputArray.push(input);
+        }
+
+        calc.display();
+
+        console.log('handleDecimal executed');
+    }
+
+    hasDecimal(str) {
+        console.log('handleDecimal executed');
+
+        return str && str.toString().indexOf('.') > -1;
     }
 
     //Returns the inputArray and checks if last index in inputArray is a number.
