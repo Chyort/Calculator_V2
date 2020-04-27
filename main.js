@@ -51,15 +51,25 @@ class Calculator {
       result = '0';
     }
     $('.calculatorScreen').val(result);
+    if($('.calculatorScreen').val().length > 13) {
+      $('.calculatorScreen').css('font-size', '22px')
+      $('.calculatorScreen').val().length
+    } else if ($('.calculatorScreen').val().length > 8) {
+      $('.calculatorScreen').css('font-size', '32px')
+    } else if ($('.calculatorScreen').val().length > 6) {
+      $('.calculatorScreen').css('font-size', '48px')
+    }
   }
   clearAll() {
     calc.input = undefined;
     calc.inputArray = [];
+    $('.calculatorScreen').css('font-size', '64px')
     calc.display();
     calc.firstOperand = null;
     calc.firstOperator = null;
   }
   handleClearEntry() {
+    $('.calculatorScreen').css('font-size', '64px')
     if (calc.inputArray.length === 1) {
       calc.clearAll();
     }
