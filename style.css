@@ -1,6 +1,10 @@
 html {
     box-sizing: border-box;
 }
+
+body {
+    background-color: black;
+}
   
 *, *::before, *::after {
     margin: 0;
@@ -9,7 +13,7 @@ html {
 }
 
 header {
-    background-color: black;
+    background-color: lightslategray;
     color: blue;
     text-align: center;
     font-size: xx-large;
@@ -30,7 +34,7 @@ header {
 
 .calculatorScreen {
     width: 100%;
-    font-size: 4rem;
+    font-size: 64px;
     height: 80px;
     background-color: #4cbef2;
     color: black;
